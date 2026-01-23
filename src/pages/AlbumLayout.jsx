@@ -1,18 +1,16 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { Outlet } from "react-router-dom"
+import { Outlet, Link } from "react-router-dom"
 
 const api = 'https://api.unsplash.com/search/photos';
 const accessId = import.meta.env.VITE_UNSPLASH_ACCESS;
-console.log(api, accessId);
-
 
 export default function AlbumLayout() {
     const [list, setList] = useState([]);
 
     useEffect(() => {
         (async () => {
-            const res = await axios.get(`${api}?client_id=${accessId}&query=office`);
+            const res = await axios.get(`${api}?client_id=${accessId}&query=animal`);
             const { results } = res.data;
             setList(results);
 
@@ -23,9 +21,14 @@ export default function AlbumLayout() {
         <div className="row">
             <div className="col-4">
                 左側選單列表
+                <p>
+                    <Link to='search'>搜尋頁面</Link>
+                </p>
                 <ul>
                     {list.map((item) => {
-                        return <li key={item.id}>{item.id}</li>
+                        return <li key={item.id}>
+                            <Link to={item.id}>{item.id}</Link>
+                        </li>
                     })}
                 </ul>
             </div>
