@@ -1,24 +1,37 @@
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import axios from 'axios';
 
 const api = 'https://api.unsplash.com/search/photos';
 const accessId = import.meta.env.VITE_UNSPLASH_ACCESS;
 
 export default function AlbumSearch() {
-    const [search, setSearch] = useState('animal')
+    const [search, setSearch] = useState('')
     const [list, setList] = useState([]);
 
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // useEffect(() => {
+    //     //console.log(searchParams.get('query')) //取出的方法
+    //     //setSearchParams({ query: 'cat' }) //寫入的方法
+    // }, [])
+
     useEffect(() => {
-        (async () => {
-            const res = await axios.get(`${api}?client_id=${accessId}&query=${search}`);
-            const { results } = res.data;
-            console.log(results);
+        if (search !== '') {
+            (async () => {
+                const res = await axios.get(`${api}?client_id=${accessId}&query=${search}`);
+                const { results } = res.data;
+                console.log(results);
 
-            setList(results);
+                setList(results);
 
-        })();
+            })();
+        }
     }, [search])
+
+    useEffect(() => {
+        setSearch(searchParams.get('query'))
+    }, [searchParams])
 
     return (
         <>
@@ -26,7 +39,8 @@ export default function AlbumSearch() {
             <input type="text" className="form-control"
                 defaultValue={search} onKeyUp={(e) => {
                     if (e.code === 'Enter') {
-                        setSearch(e.target.value)
+                        //search(e.target.value)
+                        setSearchParams({ query: e.target.value })
                     }
                 }} />
 
